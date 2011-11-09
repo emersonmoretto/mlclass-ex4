@@ -133,15 +133,17 @@ delta_2 = temp .* sigmoidGradient(z2);
 
 %delta_2 = delta_2 * sigmoidGradient(z2)';
 
-delta_2 = delta_2(2:end); % skipping sigma2(0) 
+%delta_2 = delta_2(2:end); % skipping sigma2(0) 
 
-D1 = D1 + (delta_2 * a1');
-D2 = D2 + (delta_3 * a2');
+D2 = D2 + (delta_3 * a3');
+D1 = D1 + (delta_2 * a2');
+
 
 end;
 
 Theta1_grad = D1/m;
 Theta2_grad = D2/m;
+
 % =========================================================================
 
 % Unroll gradients
