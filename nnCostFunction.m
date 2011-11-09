@@ -110,7 +110,7 @@ for t=1:m,
 
 % dummie pass-by-pass
 
-a1 = X(t,:);
+a1 = X(t,:); % X already have bias
 %a1 = [1 a1]; %bias
 z2 = Theta1 * a1';
 
@@ -124,7 +124,13 @@ a3 = sigmoid(z3);
 
 delta_3 = a3 - yk(y(t),t); % now the pig twist the tail
 
-delta_2 = ( Theta2' * delta_3) .* sigmoidGradient(z2);
+
+% god bless me
+temp = (Theta2' * delta_3);
+temp = temp(2:end);
+
+delta_2 = temp .* sigmoidGradient(z2);
+
 %delta_2 = delta_2 * sigmoidGradient(z2)';
 
 delta_2 = delta_2(2:end); % skipping sigma2(0) 
