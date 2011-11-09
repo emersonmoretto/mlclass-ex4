@@ -103,46 +103,45 @@ J = J + Reg;
 
 % Backprop
 
-D1=0;
-D2=0;
-
 for t=1:m,
 
-% dummie pass-by-pass
+	% dummie pass-by-pass
+	% forward propag
 
-a1 = X(t,:); % X already have bias
-%a1 = [1 a1]; %bias
-z2 = Theta1 * a1';
+	a1 = X(t,:); % X already have bias
+	z2 = Theta1 * a1';
 
-a2 = sigmoid(z2);
-a2 = [1 ; a2]; %bias
+	a2 = sigmoid(z2);
+	a2 = [1 ; a2]; % add bias
 
-%a2 = [ones(m,1) a2'];
-z3 = Theta2 * a2;
+	z3 = Theta2 * a2;
 
-a3 = sigmoid(z3);
-
-delta_3 = a3 - yk(y(t),t); % now the pig twist the tail
+	a3 = sigmoid(z3); % final activation layer
 
 
-% god bless me
-temp = (Theta2' * delta_3);
-temp = temp(2:end);
+	delta_3 = a3 - yk(:,t); % y(k) trick - getting columns of t element
 
-delta_2 = temp .* sigmoidGradient(z2);
 
-%delta_2 = delta_2 * sigmoidGradient(z2)';
+	% back propag (god bless me)
+	z2=[1; z2]; 
 
-%delta_2 = delta_2(2:end); % skipping sigma2(0) 
+	delta_2 = (Theta2' * delta_3) .* sigmoidGradient(z2);
 
-D2 = D2 + (delta_3 * a3');
-D1 = D1 + (delta_2 * a2');
+	% skipping sigma2(0) 
+	delta_2 = delta_2(2:end); 
 
+	Theta2_grad = Theta2_grad + delta_3 * a2';
+	Theta1_grad = Theta1_grad + delta_2 * a1; % I don't know why a1 doesn't need to be transpost (brute force try)
 
 end;
 
-Theta1_grad = D1/m;
-Theta2_grad = D2/m;
+Theta1_grad = Theta1_grad ./ m;
+Theta2_grad = Theta2_grad ./ m;
+
+
+% ToDo Regularization
+
+
 
 % =========================================================================
 
