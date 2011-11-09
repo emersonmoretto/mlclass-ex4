@@ -101,6 +101,41 @@ J = J + Reg;
 
 % -------------------------------------------------------------
 
+% Backprop
+
+D1=0;
+D2=0;
+
+for t=1:m,
+
+% dummie pass-by-pass
+
+a1 = X(t,:);
+%a1 = [1 a1]; %bias
+z2 = Theta1 * a1';
+
+a2 = sigmoid(z2);
+a2 = [1 ; a2]; %bias
+
+%a2 = [ones(m,1) a2'];
+z3 = Theta2 * a2;
+
+a3 = sigmoid(z3);
+
+delta_3 = a3 - yk(y(t),t); % now the pig twist the tail
+
+delta_2 = ( Theta2' * delta_3) .* sigmoidGradient(z2);
+%delta_2 = delta_2 * sigmoidGradient(z2)';
+
+delta_2 = delta_2(2:end); % skipping sigma2(0) 
+
+D1 = D1 + (delta_2 * a1');
+D2 = D2 + (delta_3 * a2');
+
+end;
+
+Theta1_grad = D1/m;
+Theta2_grad = D2/m;
 % =========================================================================
 
 % Unroll gradients
