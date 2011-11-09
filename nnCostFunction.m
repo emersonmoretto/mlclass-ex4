@@ -88,12 +88,8 @@ J = (1/m) * sum ( sum (  (-yk) .* log(h_theta)  -  (1-yk) .* log(1-h_theta) ));
 t1 = Theta1(:,2:size(Theta1,2));
 t2 = Theta2(:,2:size(Theta2,2));
 
-% following the formula (theta ^ 2)
-t1 = t1 .^ 2;
-t2 = t2 .^ 2;
-
 % regularization formula
-Reg = lambda  * (sum( sum ( t1 )) + sum( sum ( t2 ))) / (2*m);
+Reg = lambda  * (sum( sum ( t1.^ 2 )) + sum( sum ( t2.^ 2 ))) / (2*m);
 
 % cost function + reg
 J = J + Reg;
@@ -116,15 +112,14 @@ for t=1:m,
 
 	z3 = Theta2 * a2;
 
-	a3 = sigmoid(z3); % final activation layer
+	a3 = sigmoid(z3); % final activation layer a3 == h(theta)
 
+	
+	% back propag (god bless me)	
+	
+	z2=[1; z2]; % bias
 
 	delta_3 = a3 - yk(:,t); % y(k) trick - getting columns of t element
-
-
-	% back propag (god bless me)
-	z2=[1; z2]; 
-
 	delta_2 = (Theta2' * delta_3) .* sigmoidGradient(z2);
 
 	% skipping sigma2(0) 
