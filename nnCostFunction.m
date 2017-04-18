@@ -105,28 +105,28 @@ for t=1:m,
 	% forward propag
 
 	a1 = X(t,:); % X already have bias
-	z2 = Theta1 * a1';
+	z2 = Theta1 * a1'; % M(25x1)
 
-	a2 = sigmoid(z2);
-	a2 = [1 ; a2]; % add bias
+	a2 = sigmoid(z2); % M(25x1)
+	a2 = [1 ; a2]; % add row bias M(26x1)
 
-	z3 = Theta2 * a2;
+	z3 = Theta2 * a2; %  M(10x26) * M(26x1) = M(10x1)
 
-	a3 = sigmoid(z3); % final activation layer a3 == h(theta)
+	a3 = sigmoid(z3); % final activation layer a3 == h(theta) M(10x1)
 
 	
 	% back propag (god bless me)	
 	
-	z2=[1; z2]; % bias
+	z2=[1; z2]; % bias M(26x1)
 
-	delta_3 = a3 - yk(:,t); % y(k) trick - getting columns of t element
-	delta_2 = (Theta2' * delta_3) .* sigmoidGradient(z2);
+	delta_3 = a3 - yk(:,t); % y(k) trick - getting columns of t element M(10x1)
+	delta_2 = (Theta2' * delta_3) .* sigmoidGradient(z2); % (M(10x26)' * M(10x1)) * M(26x1) = M(26x1) * M(10x1) = M(26x1)
 
 	% skipping sigma2(0) 
-	delta_2 = delta_2(2:end); 
+	delta_2 = delta_2(2:end); % remove first row M(25x1)
 
-	Theta2_grad = Theta2_grad + delta_3 * a2';
-	Theta1_grad = Theta1_grad + delta_2 * a1; % I don't know why a1 doesn't need to be transpost (brute force try)
+	Theta2_grad = Theta2_grad + delta_3 * a2';% M(10x26) + M(10x1) * M(1x25) -> M(10x25) a2 is a product of Theta1 * a1', therefore a column vector (25x1)
+	Theta1_grad = Theta1_grad + delta_2 * a1; % M(25x401) + M(25x1) * (1x401) -> M(25x401)-> a1 is a row vector (1x401) 
 
 end;
 
